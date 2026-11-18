@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tifly Store 🛒 — Toko Online Super Lengkap</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', ' system-ui', 'sans-serif'],
+          },
+          animation: {
+            'float-slow': 'floatSlow 4s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2.5s ease-in-out infinite',
+            'cart-bump': 'cartBump 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            'slide-in-right': 'slideInRight 0.32s cubic-bezier(0.16, 1, 0.3, 1)',
+            'fade-up': 'fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'shimmer': 'shimmer 2.2s linear infinite',
+          },
+          keyframes: {
+            floatSlow: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 0 0 rgba(99, 102, 241, 0.45)' },
+              '50%': { boxShadow: '0 0 25px 6px rgba(99, 102, 241, 0.25)' },
+            },
+            cartBump: {
+              '0%': { transform: 'scale(1)' },
+              '40%': { transform: 'scale(1.22) rotate(-4deg)' },
+              '75%': { transform: 'scale(0.94) rotate(2deg)' },
+              '100%': { transform: 'scale(1) rotate(0deg)' },
+            },
+            slideInRight: {
+              '0%': { transform: 'translateX(100%)', opacity: '0.5' },
+              '100%': { transform: 'translateX(0)', opacity: '1' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(14px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+    .product-card {
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+    }
+    .product-art {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .product-card:hover .product-art {
+      transform: scale(1.08) rotate(-2deg);
+    }
+    .shimmer-badge {
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+    }
+    .fly-dot {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      width: 34px;
+      height: 34px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: white;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.55);
+      transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.62s ease;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.06); }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+  <!-- CONFETTI CANVAS FOR CHECKOUT SUCCESS -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-[90] hidden"></canvas>
+
+  <!-- TOP PROMO ANNOUNCEMENT BAR -->
+  <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-xs sm:text-sm py-2 px-4 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 font-medium">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-300 text-slate-950 animate-pulse">PROMO SPESIAL</span>
+        <span>Gunakan kode <strong class="underline decoration-amber-300 cursor-pointer" id="topPromoCodeBtn">TIFLYHEMAT20</strong> untuk diskon ekstra 20% + Gratis Ongkir!</span>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-xs text-indigo-100">
+        <span>⚡ Pengiriman Instan Se-Indonesia</span>
+        <span>🛡️ Garansi 100% Original</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER & NAVBAR -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        
+        <!-- Brand Logo -->
+        <button id="brandHomeBtn" type="button" class="flex items-center gap-3 group text-left focus:outline-none">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+            🛒
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                Tifly Store
+              </span>
+              <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                Official
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Belanja Seru, Cepat & Lengkap</p>
+          </div>
+        </button>
+
+        <!-- Search Bar -->
+        <div class="order-3 lg:order-2 w-full lg:w-auto lg:flex-1 lg:max-w-md relative">
+          <div class="relative flex items-center">
+            <span class="absolute left-3.5 text-slate-400 pointer-events-none text-base">🔍</span>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Cari produk impianmu... (Tekan '/' untuk fokus)"
+              class="w-full pl-10 pr-20 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 transition-all"
+            />
+            <button
+              id="clearSearchBtn"
+              type="button"
+              class="hidden absolute right-3 text-xs font-semibold px-2 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Navbar Controls & Actions -->
+        <nav class="order-2 lg:order-3 flex items-center gap-1.5 sm:gap-2">
+          <!-- View Switcher Tabs -->
+          <button
+            id="navCatalogBtn"
+            type="button"
+            class="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 transition-all flex items-center gap-1.5"
+          >
+            <span>🏪</span>
+            <span class="hidden sm:inline">Katalog</span>
+          </button>
+
+          <button
+            id="navWishlistBtn"
+            type="button"
+            class="relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5"
+            title="Daftar Keinginan (Wishlist)"
+          >
+            <span>❤️</span>
+            <span class="hidden md:inline">Favorit</span>
+            <span id="wishlistBadge" class="px-1.5 py-0.2 rounded-full text-[11px] font-bold bg-pink-100 text-pink-600 dark:bg-pink-950 dark:text-pink-300">0</span>
+          </button>
+
+          <button
+            id="navOrdersBtn"
+            type="button"
+            class="relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5"
+            title="Riwayat Pesanan"
+          >
+            <span>📦</span>
+            <span class="hidden md:inline">Pesanan</span>
+            <span id="ordersBadge" class="px-1.5 py-0.2 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">0</span>
+          </button>
+
+          <!-- VS Code Copy/Guide Button -->
+          <button
+            id="vscodeGuideBtn"
+            type="button"
+            class="px-2.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1"
+            title="Panduan & Salin Kode untuk VS Code"
+          >
+            <span>💻</span>
+            <span class="hidden xl:inline">VS Code</span>
+          </button>
+
+          <!-- Sound Effects Toggle -->
+          <button
+            id="soundToggleBtn"
+            type="button"
+            class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-base"
+            title="Suara Efek Aktif"
+          >
+            🔊
+          </button>
+
+          <!-- Dark Mode Toggle -->
+          <button
+            id="themeToggleBtn"
+            type="button"
+            class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-base"
+            title="Ganti Tema Gelap / Terang"
+          >
+            🌙
+          </button>
+
+          <!-- Shopping Cart Button -->
+          <button
+            id="openCartBtn"
+            type="button"
+            class="relative ml-1 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/25 flex items-center gap-2 transition-all active:scale-95"
+          >
+            <span class="text-base">🛒</span>
+            <span class="hidden sm:inline">Keranjang</span>
+            <span id="cartCountBadge" class="px-2 py-0.5 rounded-full bg-amber-300 text-slate-950 font-extrabold text-xs shadow-sm">
+              0
+            </span>
+          </button>
+        </nav>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+
+    <!-- HERO BANNER & FLASH SALE BAR (Shown on Catalog View) -->
+    <section id="heroSection" class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white shadow-xl border border-indigo-500/20">
+      <!-- Decorative floating background circles -->
+      <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-pink-500/20 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-indigo-500/25 blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 p-6 sm:p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <!-- Left Column: Hero Copy & Vouchers -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-amber-300">
+            <span>🔥</span>
+            <span>MEGA SALE TIFLY STORE — DISKON HINGGA 55%</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            Belanja Semua Kebutuhanmu di <span class="bg-gradient-to-r from-amber-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent">Tifly Store 🛒</span>
+          </h1>
+          <p class="text-slate-200 text-sm sm:text-base max-w-2xl leading-relaxed">
+            Dari perlengkapan gaming RGB, gadget pintar, camilan pancake cokelat favorit, hingga merchandise anime & alat belajar—semua siap dikirim langsung ke rumahmu!
+          </p>
+
+          <!-- Interactive Voucher Chips -->
+          <div class="pt-1">
+            <p class="text-xs font-semibold uppercase tracking-wider text-indigo-200 mb-2">🎟️ Klaim Voucher Belanja Instan (Klik untuk Pakai):</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                data-voucher="TIFLYHEMAT20"
+                class="voucher-chip group px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm flex items-center gap-2 text-xs transition-all active:scale-95"
+              >
+                <span class="text-base group-hover:rotate-12 transition-transform">🏷️</span>
+                <div class="text-left">
+                  <div class="font-bold text-amber-300">TIFLYHEMAT20</div>
+                  <div class="text-[10px] text-slate-200">Diskon 20% (Maks Rp 100rb)</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-voucher="PELAJAR50"
+                class="voucher-chip group px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm flex items-center gap-2 text-xs transition-all active:scale-95"
+              >
+                <span class="text-base group-hover:rotate-12 transition-transform">🎓</span>
+                <div class="text-left">
+                  <div class="font-bold text-emerald-300">PELAJAR50</div>
+                  <div class="text-[10px] text-slate-200">Potongan Rp 50.000 (Min. 200rb)</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-voucher="GRATISONGKIR"
+                class="voucher-chip group px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm flex items-center gap-2 text-xs transition-all active:scale-95"
+              >
+                <span class="text-base group-hover:rotate-12 transition-transform">🚚</span>
+                <div class="text-left">
+                  <div class="font-bold text-pink-300">GRATISONGKIR</div>
+                  <div class="text-[10px] text-slate-200">Bebas Ongkir Semua Kurir</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Flash Sale Spotlight Card -->
+        <div class="lg:col-span-5">
+          <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-xl animate-bounce">⚡</span>
+                <div>
+                  <h2 class="text-sm font-extrabold uppercase tracking-wider text-amber-300">Flash Sale Hari Ini</h2>
+                  <p class="text-[11px] text-indigo-200">Berakhir dalam waktu singkat!</p>
+                </div>
+              </div>
+              <!-- Countdown Timer -->
+              <div class="flex items-center gap-1 text-xs font-mono font-bold">
+                <span id="timerHours" class="px-2 py-1 rounded-lg bg-rose-600 text-white">02</span>
+                <span>:</span>
+                <span id="timerMinutes" class="px-2 py-1 rounded-lg bg-rose-600 text-white">45</span>
+                <span>:</span>
+                <span id="timerSeconds" class="px-2 py-1 rounded-lg bg-rose-600 text-white">18</span>
+              </div>
+            </div>
+
+            <!-- Spotlight Item -->
+            <div id="spotlightContainer" class="p-3.5 rounded-xl bg-slate-900/65 border border-white/10 flex items-center gap-4">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-indigo-200 pt-1">
+              <span>✨ 24 Produk Pilihan Ready Stock</span>
+              <button id="filterFlashSaleBtn" type="button" class="font-bold text-amber-300 hover:underline flex items-center gap-1">
+                <span>Lihat Semua Promo</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS & FILTER CONTROLS BAR -->
+    <section id="filterSection" class="space-y-4">
+      <!-- Category Pills -->
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <div id="categoryPillsContainer" class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Sort & Promo Filter Controls -->
+        <div class="flex items-center gap-2 flex-wrap ml-auto">
+          <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold cursor-pointer select-none shadow-sm">
+            <input id="onlyDiscountCheckbox" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500" />
+            <span>🔥 Hanya Diskon</span>
+          </label>
+
+          <select
+            id="sortSelect"
+            aria-label="Urutkan Produk"
+            class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+          >
+            <option value="popular">🌟 Paling Populer</option>
+            <option value="price-asc">💰 Harga: Rendah ke Tinggi</option>
+            <option value="price-desc">💎 Harga: Tinggi ke Rendah</option>
+            <option value="rating-desc">⭐ Rating Tertinggi</option>
+            <option value="discount-desc">🏷️ Diskon Terbesar</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active Filter Status Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900/70 px-4 py-2.5 rounded-xl border border-slate-200/70 dark:border-slate-800/80">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="showingCountText" class="font-semibold text-slate-700 dark:text-slate-200">Menampilkan 24 produk</span>
+          <span id="activeVoucherBanner" class="hidden inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold">
+            <span>🎟️ Voucher Aktif:</span>
+            <span id="activeVoucherCodeText"></span>
+            <button id="removeActiveVoucherBtn" type="button" class="ml-1 text-rose-500 hover:text-rose-700 font-extrabold" title="Hapus Voucher">✕</button>
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="resetAllFiltersBtn" type="button" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold hidden">
+            Reset Semua Filter
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT GRID SECTION -->
+    <section id="catalogViewSection">
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <!-- Populated dynamically by JS -->
+      </div>
+
+      <!-- Empty Search State -->
+      <div id="emptyCatalogState" class="hidden text-center py-16 px-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+        <div class="text-5xl">🔍</div>
+        <h3 class="text-lg font-bold">Produk tidak ditemukan</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+          Maaf, tidak ada produk yang cocok dengan kata kunci atau filter yang kamu pilih. Coba kata kunci lain atau reset filter.
+        </p>
+        <button id="emptyResetBtn" type="button" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md">
+          Tampilkan Semua Produk
+        </button>
+      </div>
+    </section>
+
+    <!-- ORDERS HISTORY VIEW SECTION (Hidden by default) -->
+    <section id="ordersViewSection" class="hidden space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+          <h2 class="text-xl font-extrabold flex items-center gap-2">
+            <span>📦</span>
+            <span>Riwayat Pesanan Saya</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Daftar transaksi checkout yang telah kamu lakukan di Tifly Store.</p>
+        </div>
+        <button id="backToShopFromOrdersBtn" type="button" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all">
+          ← Kembali Belanja
+        </button>
+      </div>
+
+      <div id="ordersListContainer" class="space-y-4">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FLOATING BOTTOM SUMMARY BAR (Appears when cart has items) -->
+  <div id="floatingCartBar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-xl hidden">
+    <div class="rounded-2xl bg-slate-900/95 dark:bg-indigo-950/95 backdrop-blur-xl text-white p-3.5 sm:px-5 shadow-2xl border border-indigo-500/30 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-lg font-bold shadow-inner">
+          🛒
+        </div>
+        <div>
+          <div class="text-xs text-indigo-200 font-medium">
+            <span id="floatingItemCount">0</span> Barang di Keranjang
+          </div>
+          <div id="floatingSubtotal" class="text-sm sm:text-base font-extrabold text-amber-300">
+            Rp 0
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          id="floatingOpenCartBtn"
+          type="button"
+          class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition-all"
+        >
+          Lihat Keranjang
+        </button>
+        <button
+          id="floatingQuickCheckoutBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg transition-all active:scale-95"
+        >
+          Checkout 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE-OVER SHOPPING CART DRAWER -->
+  <div id="cartDrawerBackdrop" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex justify-end">
+    <aside class="w-full max-w-md bg-white dark:bg-slate-900 h-full flex flex-col shadow-2xl border-l border-slate-200 dark:border-slate-800 animate-slide-in-right">
+      
+      <!-- Drawer Header -->
+      <div class="p-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">🛒</span>
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold">Keranjang Belanja</h2>
+            <p id="drawerHeaderSub" class="text-xs text-slate-500 dark:text-slate-400">0 produk dipilih</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            id="clearCartBtn"
+            type="button"
+            class="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline px-2 py-1 rounded-lg"
+          >
+            Kosongkan
+          </button>
+          <button
+            id="closeCartBtn"
+            type="button"
+            class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Free Shipping Progress Bar -->
+      <div class="px-5 py-2.5 bg-indigo-50/80 dark:bg-indigo-950/50 border-b border-indigo-100 dark:border-indigo-900/50">
+        <div class="flex items-center justify-between text-xs mb-1">
+          <span id="freeShipStatusText" class="font-semibold text-indigo-800 dark:text-indigo-200">Belanja Rp 150.000 untuk Gratis Ongkir Otomatis!</span>
+          <span id="freeShipPercentText" class="font-bold text-indigo-600 dark:text-indigo-400">0%</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-indigo-200/70 dark:bg-slate-800 overflow-hidden">
+          <div id="freeShipProgressBar" class="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Cart Items Scrollable Area -->
+      <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Drawer Footer: Voucher & Price Summary & Checkout Button -->
+      <div class="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/95 space-y-3.5">
+        <!-- Voucher Input -->
+        <div class="flex gap-2">
+          <input
+            id="cartVoucherInput"
+            type="text"
+            placeholder="Kode promo (cth: TIFLYHEMAT20)"
+            class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button
+            id="applyCartVoucherBtn"
+            type="button"
+            class="px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-500 text-white text-xs font-bold transition-all"
+          >
+            Pakai
+          </button>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="space-y-1.5 text-xs">
+          <div class="flex justify-between text-slate-500 dark:text-slate-400">
+            <span>Subtotal Produk</span>
+            <span id="cartSubtotalText" class="font-semibold text-slate-800 dark:text-slate-200">Rp 0</span>
+          </div>
+          <div id="cartVoucherRow" class="flex justify-between text-emerald-600 dark:text-emerald-400 hidden">
+            <span>Diskon Voucher (<span id="cartVoucherLabel"></span>)</span>
+            <span id="cartVoucherDiscountText" class="font-bold">-Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center pt-1.5 border-t border-slate-200 dark:border-slate-800 text-sm font-extrabold">
+            <span>Total Estimasi</span>
+            <span id="cartTotalText" class="text-lg text-indigo-600 dark:text-indigo-400">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Checkout Button -->
+        <button
+          id="proceedToCheckoutBtn"
+          type="button"
+          class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
+        >
+          <span>Checkout Sekarang</span>
+          <span>🚀</span>
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- PRODUCT QUICK VIEW / DETAIL MODAL -->
+  <div id="productModalBackdrop" class="fixed inset-0 z-50 bg-slate-950/65 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="productModalContent" class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Populated dynamically by JS -->
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL (Full Form, Shipping, Payment & Receipt) -->
+  <div id="checkoutModalBackdrop" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">💳</span>
+          <div>
+            <h2 id="checkoutModalTitle" class="text-base sm:text-lg font-extrabold">Checkout Pesanan — Tifly Store</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Lengkapi pengiriman & metode pembayaran</p>
+          </div>
+        </div>
+        <button
+          id="closeCheckoutModalBtn"
+          type="button"
+          class="w-8 h-8 rounded-xl bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 flex items-center justify-center font-bold"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Checkout Body (Form View vs Invoice Receipt View) -->
+      <div id="checkoutFormView" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 Cols: Buyer Info, Shipping, Payment -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">1. Alamat & Data Penerima</h3>
+            <button
+              id="fillSampleAddressBtn"
+              type="button"
+              class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 hover:bg-indigo-100"
+            >
+              ✨ Isi Otomatis Contoh
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold mb-1">Nama Lengkap *</label>
+              <input id="buyerNameInput" type="text" placeholder="Cth: Fatih Alfatih" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Nomor WhatsApp *</label>
+              <input id="buyerPhoneInput" type="tel" placeholder="Cth: 081234567890" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1">Alamat Lengkap Pengiriman *</label>
+            <textarea id="buyerAddressInput" rows="2" placeholder="Nama jalan, nomor rumah, kecamatan, kota, kode pos..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+          </div>
+
+          <!-- Shipping Method Selection -->
+          <div>
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2.5">2. Pilih Kurir Pengiriman</h3>
+            <div id="courierOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Payment Method Selection -->
+          <div>
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2.5">3. Metode Pembayaran</h3>
+            <div id="paymentOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold mb-1">Catatan untuk Penjual (Opsional)</label>
+            <input id="buyerNoteInput" type="text" placeholder="Cth: Packing bubble wrap tebal ya kak!" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Order Summary & Confirm Button -->
+        <div class="lg:col-span-5 flex flex-col justify-between bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+          <div class="space-y-3">
+            <h3 class="text-sm font-extrabold">Ringkasan Pesanan</h3>
+            <div id="checkoutItemsMiniList" class="max-h-48 overflow-y-auto space-y-2 pr-1">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-1.5 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Subtotal Produk</span>
+                <span id="chkSubtotal" class="font-semibold">Rp 0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Ongkos Kirim</span>
+                <span id="chkShipping" class="font-semibold">Rp 0</span>
+              </div>
+              <div id="chkDiscountRow" class="flex justify-between text-emerald-600 dark:text-emerald-400">
+                <span>Diskon Voucher</span>
+                <span id="chkDiscount" class="font-bold">-Rp 0</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Biaya Layanan App</span>
+                <span class="font-semibold">Rp 2.000</span>
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700 text-sm font-black">
+                <span>Total Tagihan</span>
+                <span id="chkGrandTotal" class="text-lg text-indigo-600 dark:text-indigo-400">Rp 0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div id="checkoutErrorMsg" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/60 p-2.5 rounded-xl border border-rose-200 dark:border-rose-800"></div>
+            <button
+              id="confirmPayBtn"
+              type="button"
+              class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all active:scale-95"
+            >
+              <span>✅ Bayar & Selesaikan Pesanan</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECEIPT / INVOICE SUCCESS VIEW (Hidden until payment confirmed) -->
+      <div id="checkoutReceiptView" class="hidden flex-1 overflow-y-auto p-6 space-y-5">
+        <!-- Populated dynamically after checkout -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VS CODE COPY & SETUP GUIDE MODAL -->
+  <div id="vscodeModalBackdrop" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">💻</span>
+          <h2 class="text-base font-extrabold">Cara Pakai di VS Code</h2>
+        </div>
+        <button id="closeVscodeModalBtn" type="button" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold">✕</button>
+      </div>
+      <div class="p-6 space-y-4 text-xs sm:text-sm">
+        <ol class="list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-300">
+          <li>Buka <strong>Visual Studio Code</strong> dan buat folder baru bernama <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-indigo-600 dark:text-indigo-400">tifly-store</code>.</li>
+          <li>Buat file baru bernama <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-indigo-600 dark:text-indigo-400">index.html</code>.</li>
+          <li>Klik tombol <strong>Salin Seluruh Kode HTML</strong> di bawah ini, lalu tempel (<em>Ctrl + V</em>) ke dalam <code class="font-mono">index.html</code> dan simpan (<em>Ctrl + S</em>).</li>
+          <li>Klik kanan pada <code class="font-mono">index.html</code> di VS Code lalu pilih <strong>Open with Live Server</strong> (atau klik 2x file di File Explorer).</li>
+        </ol>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <button
+            id="copyFullHtmlBtn"
+            type="button"
+            class="flex-1 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
+          >
+            <span>📋 Salin Seluruh Kode HTML</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed top-20 right-4 z-[80] flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+  <!-- FOOTER -->
+  <footer class="mt-12 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 px-4 sm:px-6 text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🛒</span>
+        <div>
+          <span class="font-extrabold text-slate-800 dark:text-slate-100">Tifly Store Official</span>
+          <p>Mini E-Commerce Interaktif • Siap dijalankan di VS Code & Browser</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <span>✨ 24 Produk Lengkap</span>
+        <span>•</span>
+        <span>🎟️ 3 Voucher Aktif</span>
+        <span>•</span>
+        <span>🚀 Animasi & Checkout Real-Time</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION SCRIPT -->
+  <script>
+    (function () {
+      // ==========================================
+      // 1. PRODUCT CATALOG DATA (24 RICH PRODUCTS)
+      // ==========================================
+      const PRODUCTS = [
+        {
+          id: 'p1',
+          name: 'MechaWolf RGB Gaming Keyboard 75%',
+          category: 'Gaming & Tech',
+          price: 485000,
+          originalPrice: 690000,
+          rating: 4.9,
+          sold: 1420,
+          stock: 18,
+          badge: 'Best Seller',
+          emoji: '⌨️',
+          gradient: 'from-indigo-500 via-purple-500 to-pink-500',
+          variants: ['Blue Switch Clicky', 'Red Switch Linear', 'Brown Switch Tactile'],
+          specs: ['Hot-swappable 5-Pin', '16.8 Juta Warna RGB', 'Keycaps PBT Double-Shot', 'Koneksi Tri-Mode Wireless'],
+          description: 'Keyboard mekanikal 75% favorit gamer dan programmer di VS Code. Dilengkapi gasket mount empuk dan lampu RGB dinamis dengan 18 efek animasi.'
+        },
+        {
+          id: 'p2',
+          name: 'AeroLight Pro Wireless Gaming Mouse',
+          category: 'Gaming & Tech',
+          price: 329000,
+          originalPrice: 450000,
+          rating: 4.8,
+          sold: 980,
+          stock: 25,
+          badge: 'Super Ringan 54g',
+          emoji: '🖱️',
+          gradient: 'from-cyan-500 via-blue-500 to-indigo-600',
+          variants: ['Matte White', 'Stealth Black', 'Cyber Pink'],
+          specs: ['Bobot Ultra-Ringan 54g', 'Sensor Presisi 26.000 DPI', 'Baterai Tahan 80 Jam', 'Switch Optical Anti Double-Click'],
+          description: 'Mouse gaming wireless super ringan untuk akurasi bidikan maksimal di game FPS maupun kerja desain harian.'
+        },
+        {
+          id: 'p3',
+          name: 'Tifly Signature Chocolate Pancake Box (Isi 4)',
+          category: 'Kuliner & Snack',
+          price: 28000,
+          originalPrice: 35000,
+          rating: 5.0,
+          sold: 3150,
+          stock: 40,
+          badge: 'Favorit Rabu',
+          emoji: '🥞',
+          gradient: 'from-amber-500 via-orange-500 to-rose-500',
+          variants: ['Triple Belgian Choco', 'Choco Crunchy Malt', 'Choco Cheese Melt'],
+          specs: ['100% Cokelat Lumer Premium', 'Adonan Fluffy Fresh Setiap Hari', 'Topping Melimpah', 'Kemasan Food-Grade Higienis'],
+          description: 'Pancake cokelat lembut legendaris dengan lelehan saus cokelat Belgian yang melimpah. Cocok untuk camilan istirahat sekolah atau teman ngoding!'
+        },
+        {
+          id: 'p4',
+          name: 'SonicPulse ANC Studio Headphones',
+          category: 'Gadget & Audio',
+          price: 549000,
+          originalPrice: 799000,
+          rating: 4.9,
+          sold: 860,
+          stock: 14,
+          badge: 'Flash Sale',
+          emoji: '🎧',
+          gradient: 'from-violet-600 via-fuchsia-500 to-pink-500',
+          variants: ['Midnight Silver', 'Space Black', 'Lavender Mist'],
+          specs: ['Hybrid Active Noise Cancelling', 'Driver Bass 40mm Hi-Res', 'Baterai 60 Jam Nonstop', 'Earcup Memory Foam Dingin'],
+          description: 'Headphone peredam bising aktif yang bikin fokus belajar, dengerin musik lo-fi, atau main game tanpa gangguan suara luar.'
+        },
+        {
+          id: 'p5',
+          name: 'Arduino Uno R4 WiFi Maker Starter Kit Lengkap',
+          category: 'Gaming & Tech',
+          price: 275000,
+          originalPrice: 360000,
+          rating: 4.9,
+          sold: 640,
+          stock: 22,
+          badge: 'Edukasi STEM',
+          emoji: '🤖',
+          gradient: 'from-emerald-500 via-teal-500 to-cyan-600',
+          variants: ['Paket Basic 25 Sensor', 'Paket Ultimate + LCD OLED'],
+          specs: ['Board Mikrokontroler + WiFi', 'Breadboard + Kabel Jumper', 'Sensor Ultrasonik, Suhu & Servo', 'E-Book Modul Proyek IoT'],
+          description: 'Kit eksperimen robotika dan IoT super lengkap untuk merakit proyek otomasi pintar, alarm sensor, hingga mini robot.'
+        },
+        {
+          id: 'p6',
+          name: 'Lampu Meja Belajar LED Smart Pixel Clock',
+          category: 'Gadget & Audio',
+          price: 189000,
+          originalPrice: 259000,
+          rating: 4.8,
+          sold: 1120,
+          stock: 30,
+          badge: 'Aesthetic Setup',
+          emoji: '💡',
+          gradient: 'from-amber-400 via-orange-500 to-pink-500',
+          variants: ['Putih Minimalis', 'Hitam Cyber'],
+          specs: ['3 Suhu Warna Cahaya Mata', 'Layar Jam & Suhu Digital', 'Timer Pomodoro Belajar', 'Tanpa Kedip (Eye-Care)'],
+          description: 'Lampu meja belajar anti-silau dengan layar jam pixel dan fitur pengatur waktu Pomodoro untuk menemani persiapan ujian.'
+        },
+        {
+          id: 'p7',
+          name: 'Hoodie Oversize "Code & Conquer" Cotton Fleece',
+          category: 'Fashion & Merch',
+          price: 165000,
+          originalPrice: 225000,
+          rating: 4.9,
+          sold: 1540,
+          stock: 35,
+          badge: 'Tebal & Adem',
+          emoji: '🧥',
+          gradient: 'from-slate-700 via-indigo-700 to-purple-700',
+          variants: ['Ukuran M', 'Ukuran L', 'Ukuran XL'],
+          specs: ['Cotton Fleece Gramasi 300gsm', 'Sablon Plastisol High-Density', 'Saku Kanguru + Slot Earphone', 'Potongan Boxy Oversize'],
+          description: 'Hoodie hangat dan super nyaman dengan desain tipografi developer keren di bagian punggung.'
+        },
+        {
+          id: 'p8',
+          name: 'Lampu Tidur Akriilik 3D Lentera Blok Piksel',
+          category: 'Hobi & Koleksi',
+          price: 115000,
+          originalPrice: 159000,
+          rating: 4.9,
+          sold: 2080,
+          stock: 19,
+          badge: 'Favorit Gamer',
+          emoji: '🏮',
+          gradient: 'from-orange-500 via-amber-500 to-yellow-500',
+          variants: ['Warm Torch Glow', 'Blue Soul Lantern'],
+          specs: ['Bisa Ditempel Dinding / Meja', 'Baterai Rechargeable USB-C', '4 Tingkat Kecerahan Cahaya', 'Material ABS Kokoh'],
+          description: 'Lampu dekorasi kamar bergaya voxel/piksel 3D yang membawa suasana petualangan sandbox langsung ke meja belajarmu.'
+        },
+        {
+          id: 'p9',
+          name: 'Paket Bundling Buku Strategi TKA SMP/MTs + Flashcard Rumus',
+          category: 'Alat Tulis & Edu',
+          price: 98000,
+          originalPrice: 145000,
+          rating: 5.0,
+          sold: 2490,
+          stock: 50,
+          badge: 'Siap Juara',
+          emoji: '📚',
+          gradient: 'from-blue-600 via-indigo-600 to-violet-600',
+          variants: ['Paket Matematika & Sains', 'Paket Komplit Semua Mapel'],
+          specs: ['500+ Soal HOTS & Pembahasan', 'Ringkasan Rumus Geometri & Aljabar', 'Bonus 60 Kartu Flashcard Laminasi', 'Akses Simulasi Tryout'],
+          description: 'Panduan belajar taktis dengan trik cepat menghafal rumus bangun ruang, Pythagoras, dan latihan soal standar terbaru.'
+        },
+        {
+          id: 'p10',
+          name: 'Matcha Latte & Crispy Brownies Bite Jar',
+          category: 'Kuliner & Snack',
+          price: 34000,
+          originalPrice: 45000,
+          rating: 4.8,
+          sold: 1340,
+          stock: 28,
+          badge: 'Camilan Renyah',
+          emoji: '🍵',
+          gradient: 'from-emerald-600 via-green-500 to-lime-500',
+          variants: ['Uji Matcha Dip', 'Dark Choco Hazelnut Dip'],
+          specs: ['Brownies Panggang Renyah', 'Saus Celup Matcha Asli Jepang', 'Toples Kedap Udara 250g', 'Tanpa Bahan Pengawet'],
+          description: 'Perpaduan kerenyahan brownies tipis dengan cocolan krim matcha premium yang manis-pahit seimbang.'
+        },
+        {
+          id: 'p11',
+          name: 'Smartwatch ActiveFit AMOLED Waterproof',
+          category: 'Gadget & Audio',
+          price: 299000,
+          originalPrice: 499000,
+          rating: 4.8,
+          sold: 1750,
+          stock: 16,
+          badge: 'Diskon 40%',
+          emoji: '⌚',
+          gradient: 'from-rose-500 via-pink-600 to-purple-600',
+          variants: ['Black Silicone Strap', 'Ocean Blue Strap', 'Starlight Gold'],
+          specs: ['Layar 1.85" Super AMOLED', 'Tahan Air IP68', '100+ Mode Olahraga & Detak Jantung', 'Notifikasi WA & Musik'],
+          description: 'Jam tangan pintar berlayar jernih untuk memantau aktivitas harian, pengingat jadwal belajar, dan target olahraga.'
+        },
+        {
+          id: 'p12',
+          name: 'Set Pulpen Gel Karakter & Highlighter Pastel (24 Pcs)',
+          category: 'Alat Tulis & Edu',
+          price: 49000,
+          originalPrice: 75000,
+          rating: 4.9,
+          sold: 3890,
+          stock: 60,
+          badge: 'Super Hemat',
+          emoji: '🖊️',
+          gradient: 'from-pink-400 via-purple-400 to-indigo-400',
+          variants: ['Tema Galaxy Pastel', 'Tema Retro Neon'],
+          specs: ['12 Highlighter Dua Sisi', '12 Pulpen Gel 0.5mm Anti-Macet', 'Tinta Cepat Kering Tidak Tembus', 'Bonus Kotak Penyimpanan'],
+          description: 'Bikin catatan rangkuman pelajaran makin rapi, berwarna, dan gampang diingat dengan set spidol pastel lengkap.'
+        },
+        {
+          id: 'p13',
+          name: 'T-Shirt Combed 30s "Linux Penguin Kernel Club"',
+          category: 'Fashion & Merch',
+          price: 89000,
+          originalPrice: 129000,
+          rating: 4.9,
+          sold: 810,
+          stock: 27,
+          badge: 'Edisi Spesial',
+          emoji: '👕',
+          gradient: 'from-slate-800 via-sky-700 to-cyan-600',
+          variants: ['Hitam Jet - M', 'Hitam Jet - L', 'Navy - XL'],
+          specs: ['100% Katun Combed 30s Dingin', 'Jahitan Rantai Distro', 'Sablon DTF Awet Dicuci', 'Unisex Regular Fit'],
+          description: 'Kaos wajib untuk pecinta open-source, terminal Linux, dan ngoding santai di akhir pekan.'
+        },
+        {
+          id: 'p14',
+          name: 'Gantungan Kunci Akrilik Chibi Anime & Game (Set 5 Pcs)',
+          category: 'Hobi & Koleksi',
+          price: 45000,
+          originalPrice: 65000,
+          rating: 4.9,
+          sold: 2640,
+          stock: 42,
+          badge: 'Koleksi Comifuro',
+          emoji: '✨',
+          gradient: 'from-fuchsia-500 via-pink-500 to-rose-400',
+          variants: ['Pack Fantasy Heroes', 'Pack Cyber Mecha', 'Pack Cozy Mascots'],
+          specs: ['Akrilik Dua Sisi Tebal 4mm', 'Cetakan UV High-Definition', 'Kait Clasp Bintang & Bening', 'Tahan Gores & Air'],
+          description: 'Set charm akrilik menggemaskan buat menghias tas ransel sekolah, pouch pensil, atau lanyard event.'
+        },
+        {
+          id: 'p15',
+          name: 'Webcam Full HD 1080p 60FPS + Ring Light Terpadu',
+          category: 'Gaming & Tech',
+          price: 235000,
+          originalPrice: 340000,
+          rating: 4.7,
+          sold: 520,
+          stock: 15,
+          badge: 'Kreator Konten',
+          emoji: '📷',
+          gradient: 'from-indigo-600 via-blue-600 to-sky-500',
+          variants: ['1080p 60FPS AutoFocus', '2K QHD Wide Angle'],
+          specs: ['Dual Mikrofon Noise Reduction', 'Ring Light 3 Level Sentuh', 'Plug & Play USB Tanpa Driver', 'Bonus Mini Tripod Meja'],
+          description: 'Kamera web jernih untuk rekaman konten video, presentasi kelompok online, dan live streaming.'
+        },
+        {
+          id: 'p16',
+          name: 'Spicy Korean Tteokbokki & Mozzarella Instant Cup',
+          category: 'Kuliner & Snack',
+          price: 26000,
+          originalPrice: 34000,
+          rating: 4.9,
+          sold: 2910,
+          stock: 48,
+          badge: 'Halal & Gurih',
+          emoji: '🍜',
+          gradient: 'from-red-500 via-rose-500 to-orange-500',
+          variants: ['Original Sweet Spicy', 'Extra Cheese Creamy'],
+          specs: ['Matang Dalam 4 Menit', 'Kue Beras Kenyal Fresh', 'Taburan Keju Mozzarella & Wijen', 'Sertifikasi Halal Resmi'],
+          description: 'Tteokbokki hangat siap seduh dengan saus gochujang manis gurih dan lelehan keju melimpah.'
+        },
+        {
+          id: 'p17',
+          name: 'Powerbank Fast Charging 20.000mAh Digital Display',
+          category: 'Gadget & Audio',
+          price: 179000,
+          originalPrice: 260000,
+          rating: 4.9,
+          sold: 2150,
+          stock: 24,
+          badge: 'Kabel Built-in',
+          emoji: '🔋',
+          gradient: 'from-teal-500 via-emerald-500 to-green-600',
+          variants: ['Cyber Black', 'Glacier White'],
+          specs: ['Super Fast Charge 22.5W PD', 'Sudah Ada Kabel Type-C & Lightning', 'Layar Persentase Baterai Akurat', 'Aman Dibawa ke Pesawat'],
+          description: 'Powerbank kapasitas besar dengan kabel tanam praktis, siap menjaga baterai HP tetap penuh seharian di acara komik atau sekolah.'
+        },
+        {
+          id: 'p18',
+          name: 'Deskmat XL Peta Dunia & Shortcut VS Code (80x30cm)',
+          category: 'Gaming & Tech',
+          price: 75000,
+          originalPrice: 110000,
+          rating: 4.9,
+          sold: 3420,
+          stock: 38,
+          badge: 'Wajib Punya',
+          emoji: '🗺️',
+          gradient: 'from-slate-700 via-indigo-800 to-blue-900',
+          variants: ['VS Code Cheat Sheet Dark', 'Topografi Neon Purple', 'Astronaut Space'],
+          specs: ['Ukuran Lebar 80 x 30 cm', 'Tebal 4mm Jahit Tepi Rapi', 'Permukaan Speed Micro-Weave', 'Alas Karet Anti-Slip & Tahan Cipratan'],
+          description: 'Mousepad meja ukuran jumbo yang memuat daftar shortcut penting VS Code & Git tepat di depan matamu!'
+        },
+        {
+          id: 'p19',
+          name: 'Tas Ransel Laptop Waterproof Anti-Maling USB Port',
+          category: 'Fashion & Merch',
+          price: 159000,
+          originalPrice: 245000,
+          rating: 4.8,
+          sold: 1680,
+          stock: 21,
+          badge: 'Muat Laptop 16"',
+          emoji: '🎒',
+          gradient: 'from-blue-700 via-slate-700 to-zinc-800',
+          variants: ['Charcoal Grey', 'Navy Tech', 'All Black'],
+          specs: ['Bahan Oxford Waterproof', 'Slot Laptop Busa Tebal 16 Inci', '12 Kompartemen Organizer', 'Bantalan Punggung Ergonomis'],
+          description: 'Ransel tangguh tahan hujan untuk membawa laptop, buku pelajaran, dan botol minum dengan nyaman.'
+        },
+        {
+          id: 'p20',
+          name: 'Papan Tulis Akrilik LED Glow Note + 7 Spidol Neon',
+          category: 'Alat Tulis & Edu',
+          price: 68000,
+          originalPrice: 99000,
+          rating: 4.8,
+          sold: 1490,
+          stock: 33,
+          badge: 'Target Harian',
+          emoji: '📝',
+          gradient: 'from-amber-400 via-pink-500 to-violet-500',
+          variants: ['Ukuran A4 Landscape + Stand Kayu', 'Ukuran A5 + Kalender Bulanan'],
+          specs: ['Akrilik Bening 3mm + Dudukan LED', 'Bonus 7 Spidol Warna Neon', 'Kain Lap Microfiber Halus', 'Daya USB Hemat Energi'],
+          description: 'Tulis daftar tugas, rumus penting, atau jadwal mingguan di papan akrilik yang menyala estetik di malam hari.'
+        },
+        {
+          id: 'p21',
+          name: 'Mini Speaker Bluetooth RGB Bass Boost Tahan Air',
+          category: 'Gadget & Audio',
+          price: 129000,
+          originalPrice: 185000,
+          rating: 4.8,
+          sold: 1930,
+          stock: 29,
+          badge: 'Suara Menggelegar',
+          emoji: '🔊',
+          gradient: 'from-purple-600 via-indigo-500 to-cyan-500',
+          variants: ['Phantom Black', 'Electric Blue'],
+          specs: ['Bluetooth 5.3 Koneksi Instan', 'Lampu RGB Mengikuti Irama Musik', 'Slot MicroSD & Mode TWS Dual', 'Baterai Tahan 12 Jam'],
+          description: 'Speaker portabel dengan dentuman bass mantap untuk latihan drama sekolah, nongkrong, atau dengerin musik di kamar.'
+        },
+        {
+          id: 'p22',
+          name: 'Action Figure Mecha Model Kit Articulated (Skala 1/144)',
+          category: 'Hobi & Koleksi',
+          price: 195000,
+          originalPrice: 265000,
+          rating: 4.9,
+          sold: 740,
+          stock: 12,
+          badge: 'Rakit Tanpa Lem',
+          emoji: '🦾',
+          gradient: 'from-sky-500 via-blue-600 to-indigo-700',
+          variants: ['Aegis Valkyrie Blue', 'Crimson Astray Red'],
+          specs: ['Snap-Fit Rakit Tanpa Lem', '32 Titik Artikulasi Pose Bebas', 'Termasuk Senjata Beam & Stand Base', 'Stiker Decal Metalik'],
+          description: 'Model kit robot mecha dengan artikulasi super lentur yang seru dirakit di waktu luang dan dipajang di meja.'
+        },
+        {
+          id: 'p23',
+          name: 'Cookies Soft Baked Choco Lava & Marshmallow (Isi 6)',
+          category: 'Kuliner & Snack',
+          price: 42000,
+          originalPrice: 55000,
+          rating: 4.9,
+          sold: 1820,
+          stock: 36,
+          badge: 'Fresh Oven',
+          emoji: '🍪',
+          gradient: 'from-amber-600 via-yellow-600 to-orange-500',
+          variants: ['Mix 3 Rasa Favorit', 'Full Double Dark Choco'],
+          specs: ['Diameter Besar 9cm Per Keping', 'Cokelat Lumer Saat Dihangatkan', 'Butter New Zealand Asli', 'Dikemas Satu-Satu'],
+          description: 'Soft cookies tebal yang renyah di luar dan lembut lumer di bagian tengah. Nikmat disajikan hangat bersama susu!'
+        },
+        {
+          id: 'p24',
+          name: 'Stand Laptop Aluminium Lipat 7-Level Ergonomis',
+          category: 'Gaming & Tech',
+          price: 85000,
+          originalPrice: 135000,
+          rating: 4.9,
+          sold: 4120,
+          stock: 44,
+          badge: 'Anti Pegal',
+          emoji: '💻',
+          gradient: 'from-slate-500 via-zinc-600 to-slate-800',
+          variants: ['Silver Anodized', 'Deep Space Grey'],
+          specs: ['Aluminium Alloy Kokoh Tahan 20kg', '7 Sudut Ketinggian Mata', 'Sirkulasi Udara Anti-Overheat', 'Bonus Pouch Beludru'],
+          description: 'Penyangga laptop lipat berbahan aluminium solid supaya posisi leher tidak bungkuk saat ngoding berjam-jam.'
+        }
+      ];
+
+      const VOUCHERS = {
+        TIFLYHEMAT20: {
+          code: 'TIFLYHEMAT20',
+          type: 'percent',
+          value: 20,
+          maxDiscount: 100000,
+          minSpend: 50000,
+          desc: 'Diskon 20% s/d Rp 100.000'
+        },
+        PELAJAR50: {
+          code: 'PELAJAR50',
+          type: 'fixed',
+          value: 50000,
+          maxDiscount: 50000,
+          minSpend: 200000,
+          desc: 'Potongan Rp 50.000 (Min. belanja Rp 200.000)'
+        },
+        GRATISONGKIR: {
+          code: 'GRATISONGKIR',
+          type: 'freeship',
+          value: 0,
+          maxDiscount: 35000,
+          minSpend: 0,
+          desc: 'Gratis Ongkos Kirim Semua Kurir'
+        }
+      };
+
+      const COURIERS = [
+        { id: 'instant', name: '⚡ Tifly Instant Express', eta: 'Tiba dalam 2-3 Jam', price: 22000 },
+        { id: 'reguler', name: '🚚 Tifly Reguler Cepat', eta: 'Estimasi 1-2 Hari', price: 12000 },
+        { id: 'hemat', name: '📦 Ekonomi Hemat', eta: 'Estimasi 2-4 Hari', price: 8000 },
+        { id: 'kargo', name: '🚛 Kargo Partai Besar', eta: 'Estimasi 3-5 Hari', price: 15000 }
+      ];
+
+      const PAYMENTS = [
+        { id: 'qris', name: 'QRIS TiflyPay', icon: '📱' },
+        { id: 'ewallet', name: 'GoPay / OVO / Dana', icon: '👛' },
+        { id: 'va', name: 'Transfer Bank VA', icon: '🏦' },
+        { id: 'cod', name: 'COD (Bayar di Tempat)', icon: '🤝' }
+      ];
+
+      // ==========================================
+      // 2. APPLICATION STATE
+      // ==========================================
+      const state = {
+        activeView: 'catalog', // 'catalog' | 'wishlist' | 'orders'
+        selectedCategory: 'Semua',
+        searchQuery: '',
+        sortBy: 'popular',
+        onlyDiscount: false,
+        cart: [
+          // Pre-populate 1 signature item so user immediately sees live cart badges & can test checkout right away
+          { productId: 'p3', qty: 2, variant: 'Triple Belgian Choco' }
+        ],
+        wishlist: ['p1', 'p3'],
+        orders: [],
+        activeVoucher: null,
+        selectedCourier: 'reguler',
+        selectedPayment: 'qris',
+        soundEnabled: true,
+        darkMode: false,
+        flashSaleSeconds: 2 * 3600 + 45 * 60 + 18,
+        spotlightIndex: 0
+      };
+
+      // Load saved state safely if available
+      try {
+        const savedCart = localStorage.getItem('tifly_cart_v1');
+        if (savedCart) state.cart = JSON.parse(savedCart);
+        const savedOrders = localStorage.getItem('tifly_orders_v1');
+        if (savedOrders) state.orders = JSON.parse(savedOrders);
+      } catch (e) {
+        // Ignore storage restrictions
+      }
+
+      function savePersistentState() {
+        try {
+          localStorage.setItem('tifly_cart_v1', JSON.stringify(state.cart));
+          localStorage.setItem('tifly_orders_v1', JSON.stringify(state.orders));
+        } catch (e) {}
+      }
+
+      // ==========================================
+      // 3. SYNTHESIZED SOUND ENGINE (Web Audio API)
+      // ==========================================
+      let audioCtx = null;
+      function playSound(type) {
+        if (!state.soundEnabled) return;
+        try {
+          if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) audioCtx = new AudioContextClass();
+          }
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const now = audioCtx.currentTime;
+          if (type === 'add') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.14);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.16);
+          } else if (type === 'pop') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(420, now);
+            osc.frequency.exponentialRampToValueAtTime(640, now + 0.08);
+            gain.gain.setValueAtTime(0.09, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.09);
+          } else if (type === 'success') {
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, idx) => {
+              const osc = audioCtx.createOscillator();
+              const gain = audioCtx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+              gain.gain.setValueAtTime(0.14, now + idx * 0.09);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.28);
+              osc.connect(gain);
+              gain.connect(audioCtx.destination);
+              osc.start(now + idx * 0.09);
+              osc.stop(now + idx * 0.09 + 0.28);
+            });
+          }
+        } catch (err) {}
+      }
+
+      // ==========================================
+      // 4. HELPER UTILITIES
+      // ==========================================
+      function formatRupiah(num) {
+        return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+      }
+
+      function getDiscountPercent(product) {
+        if (!product.originalPrice || product.originalPrice <= product.price) return 0;
+        return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+      }
+
+      function showToast(message, icon = '✨') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900/95 dark:bg-white/95 text-white dark:text-slate-900 text-xs font-bold shadow-xl border border-white/10 animate-fade-up';
+        toast.innerHTML = `<span class="text-base">${icon}</span><span class="flex-1">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-8px)';
+          toast.style.transition = 'all 0.25s ease';
+          setTimeout(() => toast.remove(), 260);
+        }, 2600);
+      }
+
+      function animateFlyToCart(sourceEl, emoji = '🛒') {
+        const cartBtn = document.getElementById('openCartBtn');
+        if (!sourceEl || !cartBtn) return;
+        const startRect = sourceEl.getBoundingClientRect();
+        const endRect = cartBtn.getBoundingClientRect();
+
+        const dot = document.createElement('div');
+        dot.className = 'fly-dot';
+        dot.textContent = emoji;
+        dot.style.left = `${startRect.left + startRect.width / 2 - 17}px`;
+        dot.style.top = `${startRect.top + startRect.height / 2 - 17}px`;
+        document.body.appendChild(dot);
+
+        requestAnimationFrame(() => {
+          const dx = (endRect.left + endRect.width / 2) - (startRect.left + startRect.width / 2);
+          const dy = (endRect.top + endRect.height / 2) - (startRect.top + startRect.height / 2);
+          dot.style.transform = `translate(${dx}px, ${dy}px) scale(0.35) rotate(360deg)`;
+          dot.style.opacity = '0.2';
+        });
+
+        setTimeout(() => {
+          dot.remove();
+          cartBtn.classList.remove('animate-cart-bump');
+          void cartBtn.offsetWidth;
+          cartBtn.classList.add('animate-cart-bump');
+        }, 600);
+      }
+
+      // ==========================================
+      // 5. CART & PRICING CALCULATIONS
+      // ==========================================
+      function getCartTotals() {
+        let subtotal = 0;
+        let totalQty = 0;
+        state.cart.forEach(item => {
+          const p = PRODUCTS.find(prod => prod.id === item.productId);
+          if (p) {
+            subtotal += p.price * item.qty;
+            totalQty += item.qty;
+          }
+        });
+
+        const courierObj = COURIERS.find(c => c.id === state.selectedCourier) || COURIERS[1];
+        let shippingCost = totalQty > 0 ? courierObj.price : 0;
+        let voucherDiscount = 0;
+
+        // Auto free shipping if subtotal >= 150000
+        if (subtotal >= 150000 && shippingCost <= 15000) {
+          shippingCost = 0;
+        }
+
+        if (state.activeVoucher && VOUCHERS[state.activeVoucher] && subtotal > 0) {
+          const v = VOUCHERS[state.activeVoucher];
+          if (subtotal >= v.minSpend) {
+            if (v.type === 'percent') {
+              voucherDiscount = Math.min(Math.round((subtotal * v.value) / 100), v.maxDiscount);
+            } else if (v.type === 'fixed') {
+              voucherDiscount = v.value;
+            } else if (v.type === 'freeship') {
+              shippingCost = 0;
+            }
+          }
+        }
+
+        const serviceFee = totalQty > 0 ? 2000 : 0;
+        const estimatedCartTotal = Math.max(0, subtotal - voucherDiscount);
+        const grandTotalCheckout = Math.max(0, subtotal - voucherDiscount + shippingCost + serviceFee);
+
+        return {
+          subtotal,
+          totalQty,
+          shippingCost,
+          voucherDiscount,
+          serviceFee,
+          estimatedCartTotal,
+          grandTotalCheckout
+        };
+      }
+
+      function addToCart(productId, qty = 1, variant = null, sourceButtonEl = null) {
+        const product = PRODUCTS.find(p => p.id === productId);
+        if (!product) return;
+
+        const chosenVariant = variant || product.variants[0];
+        const existing = state.cart.find(
+          item => item.productId === productId && item.variant === chosenVariant
+        );
+
+        if (existing) {
+          existing.qty = Math.min(product.stock, existing.qty + qty);
+        } else {
+          state.cart.push({
+            productId: product.id,
+            qty: Math.min(product.stock, qty),
+            variant: chosenVariant
+          });
+        }
+
+        playSound('add');
+        if (sourceButtonEl) {
+          animateFlyToCart(sourceButtonEl, product.emoji);
+        }
+        showToast(`+${qty} "${product.name}" ditambahkan ke keranjang!`, '🛒');
+        savePersistentState();
+        renderAll();
+      }
+
+      function updateCartItemQty(index, delta) {
+        const item = state.cart[index];
+        if (!item) return;
+        const product = PRODUCTS.find(p => p.id === item.productId);
+        const nextQty = item.qty + delta;
+        if (nextQty <= 0) {
+          state.cart.splice(index, 1);
+          playSound('pop');
+          showToast('Produk dihapus dari keranjang', '🗑️');
+        } else if (product && nextQty <= product.stock) {
+          item.qty = nextQty;
+          playSound('pop');
+        } else {
+          showToast('Jumlah mencapai batas stok tersedia', '⚠️');
+        }
+        savePersistentState();
+        renderAll();
+      }
+
+      function toggleWishlist(productId) {
+        const idx = state.wishlist.indexOf(productId);
+        const product = PRODUCTS.find(p => p.id === productId);
+        if (idx >= 0) {
+          state.wishlist.splice(idx, 1);
+          playSound('pop');
+          if (product) showToast(`"${product.name}" dihapus dari Favorit`, '💔');
+        } else {
+          state.wishlist.push(productId);
+          playSound('add');
+          if (product) showToast(`"${product.name}" disimpan ke Favorit!`, '❤️');
+        }
+        renderAll();
+      }
+
+      function applyVoucherCode(rawCode) {
+        const code = (rawCode || '').trim().toUpperCase();
+        if (!code) {
+          showToast('Masukkan kode voucher terlebih dahulu', '⚠️');
+          return;
+        }
+        const v = VOUCHERS[code];
+        if (!v) {
+          showToast(`Kode voucher "${code}" tidak ditemukan`, '❌');
+          return;
+        }
+        const { subtotal } = getCartTotals();
+        if (subtotal > 0 && subtotal < v.minSpend) {
+          showToast(`Minimal belanja ${formatRupiah(v.minSpend)} untuk kode ${code}`, 'ℹ️');
+        }
+        state.activeVoucher = code;
+        playSound('add');
+        showToast(`Voucher ${code} (${v.desc}) berhasil dipasang!`, '🎟️');
+        renderAll();
+      }
+
+      // ==========================================
+      // 6. RENDERING FUNCTIONS
+      // ==========================================
+      function renderSpotlight() {
+        const container = document.getElementById('spotlightContainer');
+        if (!container) return;
+        const flashProducts = PRODUCTS.filter(p => getDiscountPercent(p) >= 28);
+        const p = flashProducts[state.spotlightIndex % flashProducts.length] || PRODUCTS[0];
+        const disc = getDiscountPercent(p);
+
+        container.innerHTML = `
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br ${p.gradient} flex items-center justify-center text-3xl shadow-lg shrink-0">
+            ${p.emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-extrabold">-${disc}%</span>
+              <span class="text-[11px] text-indigo-200 truncate">${p.category}</span>
+            </div>
+            <h3 class="text-sm font-bold text-white truncate mt-0.5">${p.name}</h3>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span class="text-base font-extrabold text-amber-300">${formatRupiah(p.price)}</span>
+              <span class="text-xs text-slate-400 line-through">${formatRupiah(p.originalPrice)}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            data-spotlight-add="${p.id}"
+            class="px-3 py-2 rounded-xl bg-amber-300 hover:bg-amber-200 text-slate-950 font-extrabold text-xs shadow-md shrink-0 transition-transform active:scale-95"
+          >
+            + Ambil
+          </button>
+        `;
+
+        const btn = container.querySelector('[data-spotlight-add]');
+        if (btn) {
+          btn.addEventListener('click', (e) => {
+            addToCart(p.id, 1, p.variants[0], e.currentTarget);
+          });
+        }
+      }
+
+      function renderCategories() {
+        const container = document.getElementById('categoryPillsContainer');
+        if (!container) return;
+
+        const categories = [
+          { name: 'Semua', icon: '🏪' },
+          { name: 'Gaming & Tech', icon: '🎮' },
+          { name: 'Gadget & Audio', icon: '🎧' },
+          { name: 'Kuliner & Snack', icon: '🥞' },
+          { name: 'Fashion & Merch', icon: '👕' },
+          { name: 'Alat Tulis & Edu', icon: '📚' },
+          { name: 'Hobi & Koleksi', icon: '✨' }
+        ];
+
+        container.innerHTML = categories.map(cat => {
+          const count = cat.name === 'Semua'
+            ? PRODUCTS.length
+            : PRODUCTS.filter(p => p.category === cat.name).length;
+          const active = state.selectedCategory === cat.name && state.activeView === 'catalog';
+          return `
+            <button
+              type="button"
+              data-category="${cat.name}"
+              class="px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                active
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-[1.02]'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-indigo-400'
+              }"
+            >
+              <span>${cat.icon}</span>
+              <span>${cat.name}</span>
+              <span class="px-1.5 py-0.2 rounded-full text-[10px] ${
+                active ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+              }">${count}</span>
+            </button>
+          `;
+        }).join('');
+
+        container.querySelectorAll('[data-category]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.activeView = 'catalog';
+            state.selectedCategory = btn.getAttribute('data-category');
+            playSound('pop');
+            renderAll();
+          });
+        });
+      }
+
+      function getFilteredProducts() {
+        let list = [...PRODUCTS];
+
+        if (state.activeView === 'wishlist') {
+          list = list.filter(p => state.wishlist.includes(p.id));
+        } else if (state.selectedCategory !== 'Semua') {
+          list = list.filter(p => p.category === state.selectedCategory);
+        }
+
+        if (state.onlyDiscount) {
+          list = list.filter(p => getDiscountPercent(p) >= 25);
+        }
+
+        if (state.searchQuery.trim() !== '') {
+          const q = state.searchQuery.trim().toLowerCase();
+          list = list.filter(p =>
+            p.name.toLowerCase().includes(q) ||
+            p.category.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.badge.toLowerCase().includes(q)
+          );
+        }
+
+        if (state.sortBy === 'price-asc') {
+          list.sort((a, b) => a.price - b.price);
+        } else if (state.sortBy === 'price-desc') {
+          list.sort((a, b) => b.price - a.price);
+        } else if (state.sortBy === 'rating-desc') {
+          list.sort((a, b) => b.rating - a.rating || b.sold - a.sold);
+        } else if (state.sortBy === 'discount-desc') {
+          list.sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a));
+        } else {
+          list.sort((a, b) => b.sold - a.sold);
+        }
+
+        return list;
+      }
+
+      function renderProductGrid() {
+        const grid = document.getElementById('productGrid');
+        const emptyState = document.getElementById('emptyCatalogState');
+        const showingText = document.getElementById('showingCountText');
+        const resetBtn = document.getElementById('resetAllFiltersBtn');
+        if (!grid || !emptyState) return;
+
+        const filtered = getFilteredProducts();
+
+        if (showingText) {
+          if (state.activeView === 'wishlist') {
+            showingText.textContent = `❤️ Menampilkan ${filtered.length} produk di Daftar Favoritmu`;
+          } else {
+            showingText.textContent = `Menampilkan ${filtered.length} dari ${PRODUCTS.length} produk (${state.selectedCategory})`;
+          }
+        }
+
+        const hasFilters = state.selectedCategory !== 'Semua' || state.searchQuery.trim() !== '' || state.onlyDiscount || state.activeView === 'wishlist';
+        if (resetBtn) {
+          resetBtn.classList.toggle('hidden', !hasFilters);
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '';
+          emptyState.classList.remove('hidden');
+          return;
+        }
+        emptyState.classList.add('hidden');
+
+        grid.innerHTML = filtered.map(p => {
+          const disc = getDiscountPercent(p);
+          const isWished = state.wishlist.includes(p.id);
+          const inCartItem = state.cart.filter(c => c.productId === p.id);
+          const inCartQty = inCartItem.reduce((sum, item) => sum + item.qty, 0);
+
+          return `
+            <article class="product-card group rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-xl flex flex-col overflow-hidden relative">
+              <!-- Product Visual Header -->
+              <div class="relative h-44 bg-gradient-to-br ${p.gradient} p-4 flex items-center justify-center overflow-hidden">
+                <!-- Decorative SVG Pattern -->
+                <svg class="absolute inset-0 w-full h-full opacity-15 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <circle cx="85" cy="20" r="30" fill="white" />
+                  <circle cx="15" cy="85" r="25" fill="white" />
+                </svg>
+
+                <!-- Top Left Badges -->
+                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-slate-950/75 text-white backdrop-blur-md">
+                    ${p.badge}
+                  </span>
+                  ${disc > 0 ? `
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-500 text-white shadow-sm w-fit">
+                      Hemat ${disc}%
+                    </span>
+                  ` : ''}
+                </div>
+
+                <!-- Top Right Wishlist Button -->
+                <button
+                  type="button"
+                  data-wish-btn="${p.id}"
+                  aria-label="Simpan ke Favorit"
+                  class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow-md hover:scale-110 transition-transform"
+                >
+                  ${isWished ? '❤️' : '🤍'}
+                </button>
+
+                <!-- Center Product Icon / Art -->
+                <div
+                  data-detail-btn="${p.id}"
+                  class="product-art cursor-pointer w-24 h-24 rounded-3xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-5xl shadow-inner select-none"
+                  title="Klik untuk lihat spesifikasi detail"
+                >
+                  ${p.emoji}
+                </div>
+
+                <!-- Quick View Pill -->
+                <button
+                  type="button"
+                  data-detail-btn="${p.id}"
+                  class="absolute bottom-2.5 right-3 px-2.5 py-1 rounded-lg bg-slate-950/65 hover:bg-slate-950/85 text-white text-[10px] font-semibold backdrop-blur-sm transition-all"
+                >
+                  🔍 Detail
+                </button>
+              </div>
+
+              <!-- Card Body -->
+              <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                    <span>${p.category}</span>
+                    <span class="flex items-center gap-1 text-amber-500 font-bold">
+                      ★ ${p.rating.toFixed(1)}
+                      <span class="text-slate-400 font-normal">(${p.sold >= 1000 ? (p.sold / 1000).toFixed(1) + 'rb+' : p.sold} terjual)</span>
+                    </span>
+                  </div>
+
+                  <h3
+                    data-detail-btn="${p.id}"
+                    class="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
+                  >
+                    ${p.name}
+                  </h3>
+
+                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                    ${p.description}
+                  </p>
+                </div>
+
+                <!-- Price & Add to Cart Footer -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2.5">
+                  <div>
+                    ${p.originalPrice > p.price ? `
+                      <div class="text-[11px] text-slate-400 line-through">${formatRupiah(p.originalPrice)}</div>
+                    ` : ''}
+                    <div class="text-base sm:text-lg font-black text-indigo-600 dark:text-indigo-400">
+                      ${formatRupiah(p.price)}
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      data-add-btn="${p.id}"
+                      class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 transition-all active:scale-95"
+                    >
+                      <span>+ Tambah ke Keranjang</span>
+                      ${inCartQty > 0 ? `<span class="px-1.5 py-0.2 rounded-full bg-amber-300 text-slate-950 font-extrabold text-[10px]">${inCartQty}</span>` : ''}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        // Bind events
+        grid.querySelectorAll('[data-add-btn]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const pid = btn.getAttribute('data-add-btn');
+            addToCart(pid, 1, null, e.currentTarget);
+          });
+        });
+
+        grid.querySelectorAll('[data-wish-btn]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const pid = btn.getAttribute('data-wish-btn');
+            toggleWishlist(pid);
+          });
+        });
+
+        grid.querySelectorAll('[data-detail-btn]').forEach(el => {
+          el.addEventListener('click', () => {
+            const pid = el.getAttribute('data-detail-btn');
+            openProductDetailModal(pid);
+          });
+        });
+      }
+
+      function renderCartAndBadges() {
+        const { subtotal, totalQty, voucherDiscount, estimatedCartTotal } = getCartTotals();
+
+        // Top navbar badges
+        const cartBadge = document.getElementById('cartCountBadge');
+        if (cartBadge) cartBadge.textContent = totalQty;
+
+        const wishBadge = document.getElementById('wishlistBadge');
+        if (wishBadge) wishBadge.textContent = state.wishlist.length;
+
+        const ordersBadge = document.getElementById('ordersBadge');
+        if (ordersBadge) ordersBadge.textContent = state.orders.length;
+
+        // Active voucher indicator on catalog bar
+        const activeVoucherBanner = document.getElementById('activeVoucherBanner');
+        const activeVoucherCodeText = document.getElementById('activeVoucherCodeText');
+        if (activeVoucherBanner && activeVoucherCodeText) {
+          if (state.activeVoucher) {
+            activeVoucherBanner.classList.remove('hidden');
+            activeVoucherCodeText.textContent = state.activeVoucher;
+          } else {
+            activeVoucherBanner.classList.add('hidden');
+          }
+        }
+
+        // Floating bottom bar
+        const floatingBar = document.getElementById('floatingCartBar');
+        const floatingCount = document.getElementById('floatingItemCount');
+        const floatingSub = document.getElementById('floatingSubtotal');
+        if (floatingBar) {
+          if (totalQty > 0 && state.activeView !== 'orders') {
+            floatingBar.classList.remove('hidden');
+            if (floatingCount) floatingCount.textContent = totalQty;
+            if (floatingSub) floatingSub.textContent = formatRupiah(estimatedCartTotal);
+          } else {
+            floatingBar.classList.add('hidden');
+          }
+        }
+
+        // Cart Drawer header & free shipping progress
+        const drawerSub = document.getElementById('drawerHeaderSub');
+        if (drawerSub) drawerSub.textContent = `${totalQty} barang di keranjang`;
+
+        const freeShipTarget = 150000;
+        const pct = Math.min(100, Math.round((subtotal / freeShipTarget) * 100));
+        const freeShipBar = document.getElementById('freeShipProgressBar');
+        const freeShipPctText = document.getElementById('freeShipPercentText');
+        const freeShipStatus = document.getElementById('freeShipStatusText');
+        if (freeShipBar) freeShipBar.style.width = `${pct}%`;
+        if (freeShipPctText) freeShipPctText.textContent = `${pct}%`;
+        if (freeShipStatus) {
+          if (subtotal >= freeShipTarget || state.activeVoucher === 'GRATISONGKIR') {
+            freeShipStatus.innerHTML = '🎉 <strong>Selamat!</strong> Pesananmu dapat <strong>Gratis Ongkir</strong>!';
+          } else {
+            const diff = freeShipTarget - subtotal;
+            freeShipStatus.textContent = `Tambah ${formatRupiah(diff)} lagi untuk Gratis Ongkir Otomatis!`;
+          }
+        }
+
+        // Cart Items List
+        const itemsContainer = document.getElementById('cartItemsContainer');
+        const proceedBtn = document.getElementById('proceedToCheckoutBtn');
+        if (itemsContainer) {
+          if (state.cart.length === 0) {
+            itemsContainer.innerHTML = `
+              <div class="text-center py-14 px-4 space-y-3">
+                <div class="text-5xl">🛒</div>
+                <h3 class="font-bold text-sm">Keranjang Belanjamu Masih Kosong</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Yuk pilih produk favoritmu dari katalog Tifly Store!</p>
+              </div>
+            `;
+            if (proceedBtn) proceedBtn.disabled = true;
+          } else {
+            if (proceedBtn) proceedBtn.disabled = false;
+            itemsContainer.innerHTML = state.cart.map((item, idx) => {
+              const p = PRODUCTS.find(prod => prod.id === item.productId);
+              if (!p) return '';
+              return `
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-3">
+                  <div class="w-14 h-14 rounded-xl bg-gradient-to-br ${p.gradient} flex items-center justify-center text-2xl shrink-0 shadow-sm">
+                    ${p.emoji}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-xs font-bold truncate">${p.name}</h4>
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400">Varian: ${item.variant}</div>
+                    <div class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 mt-1">
+                      ${formatRupiah(p.price * item.qty)}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <button type="button" data-cart-dec="${idx}" class="w-6 h-6 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs flex items-center justify-center">−</button>
+                    <span class="text-xs font-extrabold w-5 text-center">${item.qty}</span>
+                    <button type="button" data-cart-inc="${idx}" class="w-6 h-6 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs flex items-center justify-center">+</button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            itemsContainer.querySelectorAll('[data-cart-dec]').forEach(btn => {
+              btn.addEventListener('click', () => {
+                updateCartItemQty(Number(btn.getAttribute('data-cart-dec')), -1);
+              });
+            });
+            itemsContainer.querySelectorAll('[data-cart-inc]').forEach(btn => {
+              btn.addEventListener('click', () => {
+                updateCartItemQty(Number(btn.getAttribute('data-cart-inc')), 1);
+              });
+            });
+          }
+        }
+
+        // Totals inside drawer
+        const subText = document.getElementById('cartSubtotalText');
+        const voucherRow = document.getElementById('cartVoucherRow');
+        const voucherLabel = document.getElementById('cartVoucherLabel');
+        const voucherDiscText = document.getElementById('cartVoucherDiscountText');
+        const totalText = document.getElementById('cartTotalText');
+
+        if (subText) subText.textContent = formatRupiah(subtotal);
+        if (voucherRow) {
+          if (state.activeVoucher && (voucherDiscount > 0 || state.activeVoucher === 'GRATISONGKIR')) {
+            voucherRow.classList.remove('hidden');
+            if (voucherLabel) voucherLabel.textContent = state.activeVoucher;
+            if (voucherDiscText) {
+              voucherDiscText.textContent = state.activeVoucher === 'GRATISONGKIR' ? 'Gratis Ongkir' : `-${formatRupiah(voucherDiscount)}`;
+            }
+          } else {
+            voucherRow.classList.add('hidden');
+          }
+        }
+        if (totalText) totalText.textContent = formatRupiah(estimatedCartTotal);
+      }
+
+      function renderOrdersView() {
+        const container = document.getElementById('ordersListContainer');
+        if (!container) return;
+
+        if (state.orders.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-16 px-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+              <div class="text-5xl">📦</div>
+              <h3 class="text-base font-bold">Belum Ada Riwayat Pesanan</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                Pesanan yang sudah kamu checkout akan tercatat lengkap beserta nomor invoice dan struk digitalnya di sini.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = state.orders.map(order => `
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-extrabold">
+                  ✅ LUNAS & DIPROSES
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-500">${order.orderId}</span>
+                <span class="text-xs text-slate-400">• ${order.dateStr}</span>
+              </div>
+              <div class="text-sm font-black text-indigo-600 dark:text-indigo-400">
+                Total: ${formatRupiah(order.grandTotal)}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="space-y-1.5">
+                <div class="font-bold text-slate-700 dark:text-slate-300">Daftar Barang (${order.items.length}):</div>
+                ${order.items.map(it => `
+                  <div class="flex justify-between text-slate-600 dark:text-slate-400">
+                    <span>${it.emoji} ${it.name} (${it.variant}) × ${it.qty}</span>
+                    <span class="font-semibold">${formatRupiah(it.price * it.qty)}</span>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl space-y-1">
+                <div><strong>Penerima:</strong> ${order.buyerName} (${order.buyerPhone})</div>
+                <div><strong>Alamat:</strong> ${order.buyerAddress}</div>
+                <div><strong>Kurir:</strong> ${order.courierName} • <strong>Metode:</strong> ${order.paymentName}</div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderViewTabs() {
+        const hero = document.getElementById('heroSection');
+        const filterSec = document.getElementById('filterSection');
+        const catalogSec = document.getElementById('catalogViewSection');
+        const ordersSec = document.getElementById('ordersViewSection');
+
+        const navCatalog = document.getElementById('navCatalogBtn');
+        const navWish = document.getElementById('navWishlistBtn');
+        const navOrders = document.getElementById('navOrdersBtn');
+
+        const activeClass = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300';
+        const idleClass = 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+
+        [navCatalog, navWish, navOrders].forEach(el => {
+          if (!el) return;
+          el.className = `relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${idleClass}`;
+        });
+
+        if (state.activeView === 'orders') {
+          if (hero) hero.classList.add('hidden');
+          if (filterSec) filterSec.classList.add('hidden');
+          if (catalogSec) catalogSec.classList.add('hidden');
+          if (ordersSec) ordersSec.classList.remove('hidden');
+          if (navOrders) navOrders.className = `relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${activeClass}`;
+          renderOrdersView();
+        } else {
+          if (hero) hero.classList.toggle('hidden', state.activeView === 'wishlist');
+          if (filterSec) filterSec.classList.remove('hidden');
+          if (catalogSec) catalogSec.classList.remove('hidden');
+          if (ordersSec) ordersSec.classList.add('hidden');
+
+          if (state.activeView === 'wishlist' && navWish) {
+            navWish.className = `relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${activeClass}`;
+          } else if (navCatalog) {
+            navCatalog.className = `relative px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 ${activeClass}`;
+          }
+        }
+      }
+
+      function renderAll() {
+        renderViewTabs();
+        renderSpotlight();
+        renderCategories();
+        renderProductGrid();
+        renderCartAndBadges();
+      }
+
+      // ==========================================
+      // 7. PRODUCT DETAIL MODAL
+      // ==========================================
+      function openProductDetailModal(productId) {
+        const p = PRODUCTS.find(prod => prod.id === productId);
+        if (!p) return;
+
+        const backdrop = document.getElementById('productModalBackdrop');
+        const content = document.getElementById('productModalContent');
+        if (!backdrop || !content) return;
+
+        const disc = getDiscountPercent(p);
+        let selectedVar = p.variants[0];
+        let modalQty = 1;
+
+        content.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-12 overflow-y-auto">
+            <div class="md:col-span-5 bg-gradient-to-br ${p.gradient} p-8 flex flex-col items-center justify-center relative min-h-[220px]">
+              <span class="px-3 py-1 rounded-full bg-slate-950/75 text-white text-xs font-extrabold mb-3">
+                ${p.badge}
+              </span>
+              <div class="text-7xl animate-float-slow select-none">${p.emoji}</div>
+              ${disc > 0 ? `<span class="mt-4 px-3 py-1 rounded-full bg-rose-500 text-white text-xs font-extrabold">Hemat ${disc}%</span>` : ''}
+            </div>
+
+            <div class="md:col-span-7 p-6 space-y-4">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">${p.category}</span>
+                  <h2 class="text-lg sm:text-xl font-extrabold mt-0.5">${p.name}</h2>
+                </div>
+                <button id="closeProductModalBtn" type="button" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold shrink-0">✕</button>
+              </div>
+
+              <div class="flex items-center gap-3 text-xs">
+                <span class="font-bold text-amber-500">★ ${p.rating.toFixed(1)} Rating</span>
+                <span>•</span>
+                <span>${p.sold.toLocaleString('id-ID')} Terjual</span>
+                <span>•</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-semibold">Stok: ${p.stock} tersedia</span>
+              </div>
+
+              <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex items-baseline gap-3">
+                <span class="text-2xl font-black text-indigo-600 dark:text-indigo-400">${formatRupiah(p.price)}</span>
+                ${p.originalPrice > p.price ? `<span class="text-xs text-slate-400 line-through">${formatRupiah(p.originalPrice)}</span>` : ''}
+              </div>
+
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${p.description}</p>
+
+              <div>
+                <div class="text-xs font-bold mb-1.5">Spesifikasi Unggulan:</div>
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+                  ${p.specs.map(s => `<li class="flex items-center gap-1.5"><span class="text-emerald-500">✔</span><span>${s}</span></li>`).join('')}
+                </ul>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold mb-1.5">Pilih Varian:</div>
+                <div id="modalVariantsWrap" class="flex flex-wrap gap-2">
+                  ${p.variants.map((v, i) => `
+                    <button
+                      type="button"
+                      data-var="${v}"
+                      class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                        i === 0
+                          ? 'bg-indigo-600 text-white border-indigo-600'
+                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                      }"
+                    >
+                      ${v}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div class="pt-2 flex items-center gap-3">
+                <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl">
+                  <button id="modalQtyDec" type="button" class="w-6 h-6 font-bold">−</button>
+                  <span id="modalQtyVal" class="text-sm font-extrabold w-6 text-center">1</span>
+                  <button id="modalQtyInc" type="button" class="w-6 h-6 font-bold">+</button>
+                </div>
+                <button
+                  id="modalAddCartBtn"
+                  type="button"
+                  class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs sm:text-sm shadow-lg transition-all active:scale-95"
+                >
+                  🛒 Tambah ke Keranjang
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        backdrop.classList.remove('hidden');
+        playSound('pop');
+
+        // Variant selection
+        const varButtons = content.querySelectorAll('[data-var]');
+        varButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            selectedVar = btn.getAttribute('data-var');
+            varButtons.forEach(b => {
+              const active = b.getAttribute('data-var') === selectedVar;
+              b.className = `px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                active
+                  ? 'bg-indigo-600 text-white border-indigo-600'
+                  : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+              }`;
+            });
+          });
+        });
+
+        const qtyVal = content.querySelector('#modalQtyVal');
+        content.querySelector('#modalQtyDec').addEventListener('click', () => {
+          if (modalQty > 1) {
+            modalQty--;
+            qtyVal.textContent = modalQty;
+          }
+        });
+        content.querySelector('#modalQtyInc').addEventListener('click', () => {
+          if (modalQty < p.stock) {
+            modalQty++;
+            qtyVal.textContent = modalQty;
+          }
+        });
+
+        content.querySelector('#modalAddCartBtn').addEventListener('click', (e) => {
+          addToCart(p.id, modalQty, selectedVar, e.currentTarget);
+          backdrop.classList.add('hidden');
+        });
+
+        content.querySelector('#closeProductModalBtn').addEventListener('click', () => {
+          backdrop.classList.add('hidden');
+        });
+      }
+
+      // ==========================================
+      // 8. CHECKOUT MODAL & CONFETTI CELEBRATION
+      // ==========================================
+      function openCheckoutModal() {
+        if (state.cart.length === 0) {
+          showToast('Keranjang masih kosong! Pilih produk dulu ya.', '🛒');
+          return;
+        }
+        document.getElementById('cartDrawerBackdrop').classList.add('hidden');
+        const backdrop = document.getElementById('checkoutModalBackdrop');
+        const formView = document.getElementById('checkoutFormView');
+        const receiptView = document.getElementById('checkoutReceiptView');
+        const errBox = document.getElementById('checkoutErrorMsg');
+
+        if (formView) formView.classList.remove('hidden');
+        if (receiptView) receiptView.classList.add('hidden');
+        if (errBox) errBox.classList.add('hidden');
+        if (backdrop) backdrop.classList.remove('hidden');
+
+        renderCheckoutModalOptions();
+        playSound('pop');
+      }
+
+      function renderCheckoutModalOptions() {
+        // Couriers
+        const courierWrap = document.getElementById('courierOptionsContainer');
+        if (courierWrap) {
+          courierWrap.innerHTML = COURIERS.map(c => {
+            const active = state.selectedCourier === c.id;
+            return `
+              <button
+                type="button"
+                data-courier="${c.id}"
+                class="p-3 rounded-xl border text-left transition-all ${
+                  active
+                    ? 'border-indigo-600 bg-indigo-50/70 dark:bg-indigo-950/60 ring-2 ring-indigo-500/30'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                }"
+              >
+                <div class="text-xs font-extrabold">${c.name}</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400">${c.eta}</div>
+                <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-1">${formatRupiah(c.price)}</div>
+              </button>
+            `;
+          }).join('');
+
+          courierWrap.querySelectorAll('[data-courier]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              state.selectedCourier = btn.getAttribute('data-courier');
+              playSound('pop');
+              renderCheckoutModalOptions();
+            });
+          });
+        }
+
+        // Payments
+        const payWrap = document.getElementById('paymentOptionsContainer');
+        if (payWrap) {
+          payWrap.innerHTML = PAYMENTS.map(pay => {
+            const active = state.selectedPayment === pay.id;
+            return `
+              <button
+                type="button"
+                data-payment="${pay.id}"
+                class="p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  active
+                    ? 'border-indigo-600 bg-indigo-50/70 dark:bg-indigo-950/60 ring-2 ring-indigo-500/30'
+                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                }"
+              >
+                <span class="text-xl">${pay.icon}</span>
+                <span class="text-[11px] font-bold leading-tight">${pay.name}</span>
+              </button>
+            `;
+          }).join('');
+
+          payWrap.querySelectorAll('[data-payment]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              state.selectedPayment = btn.getAttribute('data-payment');
+              playSound('pop');
+              renderCheckoutModalOptions();
+            });
+          });
+        }
+
+        // Mini item list & summary totals
+        const miniList = document.getElementById('checkoutItemsMiniList');
+        if (miniList) {
+          miniList.innerHTML = state.cart.map(item => {
+            const p = PRODUCTS.find(prod => prod.id === item.productId);
+            if (!p) return '';
+            return `
+              <div class="flex items-center justify-between gap-2 text-xs py-1 border-b border-slate-200/60 dark:border-slate-700/60">
+                <div class="truncate">
+                  <span class="mr-1">${p.emoji}</span>
+                  <span class="font-semibold">${p.name}</span>
+                  <span class="text-slate-400">×${item.qty}</span>
+                </div>
+                <span class="font-bold shrink-0">${formatRupiah(p.price * item.qty)}</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        const { subtotal, shippingCost, voucherDiscount, grandTotalCheckout } = getCartTotals();
+        document.getElementById('chkSubtotal').textContent = formatRupiah(subtotal);
+        document.getElementById('chkShipping').textContent = shippingCost === 0 ? 'GRATIS (Rp 0)' : formatRupiah(shippingCost);
+        document.getElementById('chkDiscount').textContent = `-${formatRupiah(voucherDiscount)}`;
+        document.getElementById('chkGrandTotal').textContent = formatRupiah(grandTotalCheckout);
+      }
+
+      function launchConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        if (!canvas) return;
+        canvas.classList.remove('hidden');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+
+        const pieces = Array.from({ length: 90 }, () => ({
+          x: Math.random() * canvas.width,
+          y: -20 - Math.random() * 200,
+          w: 7 + Math.random() * 6,
+          h: 10 + Math.random() * 8,
+          vx: -2 + Math.random() * 4,
+          vy: 3 + Math.random() * 4,
+          rot: Math.random() * Math.PI * 2,
+          vrot: -0.1 + Math.random() * 0.2,
+          color: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][Math.floor(Math.random() * 5)]
+        }));
+
+        let frames = 0;
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          pieces.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vrot;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+          });
+          frames++;
+          if (frames < 140) {
+            requestAnimationFrame(draw);
+          } else {
+            canvas.classList.add('hidden');
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      function submitCheckoutOrder() {
+        const nameInput = document.getElementById('buyerNameInput');
+        const phoneInput = document.getElementById('buyerPhoneInput');
+        const addressInput = document.getElementById('buyerAddressInput');
+        const noteInput = document.getElementById('buyerNoteInput');
+        const errBox = document.getElementById('checkoutErrorMsg');
+
+        const buyerName = (nameInput.value || '').trim();
+        const buyerPhone = (phoneInput.value || '').trim();
+        const buyerAddress = (addressInput.value || '').trim();
+        const buyerNote = (noteInput.value || '').trim();
+
+        if (!buyerName || !buyerPhone || !buyerAddress) {
+          errBox.textContent = '⚠️ Mohon lengkapi Nama Lengkap, Nomor WhatsApp, dan Alamat Pengiriman (atau klik tombol "Isi Otomatis Contoh").';
+          errBox.classList.remove('hidden');
+          playSound('pop');
+          return;
+        }
+
+        const { subtotal, shippingCost, voucherDiscount, serviceFee, grandTotalCheckout } = getCartTotals();
+        const courierObj = COURIERS.find(c => c.id === state.selectedCourier) || COURIERS[1];
+        const paymentObj = PAYMENTS.find(p => p.id === state.selectedPayment) || PAYMENTS[0];
+
+        const orderItems = state.cart.map(item => {
+          const p = PRODUCTS.find(prod => prod.id === item.productId);
+          return {
+            id: p.id,
+            name: p.name,
+            emoji: p.emoji,
+            price: p.price,
+            qty: item.qty,
+            variant: item.variant
+          };
+        });
+
+        const now = new Date();
+        const orderRecord = {
+          orderId: 'INV-TIFLY-' + Math.floor(100000 + Math.random() * 900000),
+          dateStr: now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+          buyerName,
+          buyerPhone,
+          buyerAddress,
+          buyerNote: buyerNote || '-',
+          courierName: courierObj.name,
+          paymentName: paymentObj.name,
+          items: orderItems,
+          subtotal,
+          shippingCost,
+          voucherDiscount,
+          serviceFee,
+          grandTotal: grandTotalCheckout
+        };
+
+        state.orders.unshift(orderRecord);
+        state.cart = [];
+        state.activeVoucher = null;
+        savePersistentState();
+
+        playSound('success');
+        launchConfetti();
+        renderAll();
+
+        // Switch modal to Receipt View
+        const formView = document.getElementById('checkoutFormView');
+        const receiptView = document.getElementById('checkoutReceiptView');
+        formView.classList.add('hidden');
+        receiptView.classList.remove('hidden');
+
+        receiptView.innerHTML = `
+          <div class="text-center space-y-2">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+              🎉
+            </div>
+            <h3 class="text-xl font-black text-emerald-600 dark:text-emerald-400">Checkout Berhasil!</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Terima kasih sudah berbelanja di <strong>Tifly Store 🛒</strong>. Pesananmu sedang disiapkan!</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
+            <div class="flex flex-wrap justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+              <div>
+                <span class="text-slate-400 block">Nomor Invoice</span>
+                <span class="font-mono font-extrabold text-sm text-indigo-600 dark:text-indigo-400">${orderRecord.orderId}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-slate-400 block">Waktu Transaksi</span>
+                <span class="font-semibold">${orderRecord.dateStr}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div><strong>Penerima:</strong> ${orderRecord.buyerName} (${orderRecord.buyerPhone})</div>
+              <div><strong>Metode Bayar:</strong> ${orderRecord.paymentName}</div>
+              <div class="sm:col-span-2"><strong>Alamat Pengiriman:</strong> ${orderRecord.buyerAddress}</div>
+              <div class="sm:col-span-2"><strong>Kurir:</strong> ${orderRecord.courierName}</div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1.5">
+              <div class="font-bold">Rincian Produk:</div>
+              ${orderRecord.items.map(it => `
+                <div class="flex justify-between">
+                  <span>${it.emoji} ${it.name} (${it.variant}) × ${it.qty}</span>
+                  <span class="font-semibold">${formatRupiah(it.price * it.qty)}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1">
+              <div class="flex justify-between text-slate-500"><span>Subtotal</span><span>${formatRupiah(orderRecord.subtotal)}</span></div>
+              <div class="flex justify-between text-slate-500"><span>Ongkos Kirim</span><span>${formatRupiah(orderRecord.shippingCost)}</span></div>
+              <div class="flex justify-between text-emerald-600"><span>Diskon Voucher</span><span>-${formatRupiah(orderRecord.voucherDiscount)}</span></div>
+              <div class="flex justify-between text-slate-500"><span>Biaya Layanan</span><span>${formatRupiah(orderRecord.serviceFee)}</span></div>
+              <div class="flex justify-between text-sm font-black pt-1 border-t border-slate-200 dark:border-slate-700">
+                <span>Total Dibayar</span>
+                <span class="text-indigo-600 dark:text-indigo-400">${formatRupiah(orderRecord.grandTotal)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button
+              id="viewOrderHistoryAfterPayBtn"
+              type="button"
+              class="flex-1 py-3 px-4 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm"
+            >
+              📦 Lihat Riwayat Pesanan
+            </button>
+            <button
+              id="continueShopAfterPayBtn"
+              type="button"
+              class="flex-1 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm"
+            >
+              🛍️ Lanjut Belanja Lagi
+            </button>
+          </div>
+        `;
+
+        receiptView.querySelector('#viewOrderHistoryAfterPayBtn').addEventListener('click', () => {
+          document.getElementById('checkoutModalBackdrop').classList.add('hidden');
+          state.activeView = 'orders';
+          renderAll();
+        });
+        receiptView.querySelector('#continueShopAfterPayBtn').addEventListener('click', () => {
+          document.getElementById('checkoutModalBackdrop').classList.add('hidden');
+          state.activeView = 'catalog';
+          renderAll();
+        });
+      }
+
+      // ==========================================
+      // 9. EVENT LISTENERS & INITIALIZATION
+      // ==========================================
+      function initEventListeners() {
+        // Brand home click
+        document.getElementById('brandHomeBtn').addEventListener('click', () => {
+          state.activeView = 'catalog';
+          state.selectedCategory = 'Semua';
+          state.searchQuery = '';
+          state.onlyDiscount = false;
+          document.getElementById('searchInput').value = '';
+          document.getElementById('onlyDiscountCheckbox').checked = false;
+          playSound('pop');
+          renderAll();
+        });
+
+        // Navigation buttons
+        document.getElementById('navCatalogBtn').addEventListener('click', () => {
+          state.activeView = 'catalog';
+          playSound('pop');
+          renderAll();
+        });
+        document.getElementById('navWishlistBtn').addEventListener('click', () => {
+          state.activeView = 'wishlist';
+          playSound('pop');
+          renderAll();
+        });
+        document.getElementById('navOrdersBtn').addEventListener('click', () => {
+          state.activeView = 'orders';
+          playSound('pop');
+          renderAll();
+        });
+        document.getElementById('backToShopFromOrdersBtn').addEventListener('click', () => {
+          state.activeView = 'catalog';
+          playSound('pop');
+          renderAll();
+        });
+
+        // Search input
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        searchInput.addEventListener('input', (e) => {
+          state.searchQuery = e.target.value;
+          if (state.activeView === 'orders') state.activeView = 'catalog';
+          clearSearchBtn.classList.toggle('hidden', state.searchQuery.trim() === '');
+          renderAll();
+        });
+        clearSearchBtn.addEventListener('click', () => {
+          state.searchQuery = '';
+          searchInput.value = '';
+          clearSearchBtn.classList.add('hidden');
+          renderAll();
+        });
+
+        // Keyboard shortcut '/' to focus search
+        window.addEventListener('keydown', (e) => {
+          if (e.key === '/' && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+            e.preventDefault();
+            searchInput.focus();
+          }
+        });
+
+        // Sort & Only Discount
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+          state.sortBy = e.target.value;
+          playSound('pop');
+          renderAll();
+        });
+        document.getElementById('onlyDiscountCheckbox').addEventListener('change', (e) => {
+          state.onlyDiscount = e.target.checked;
+          playSound('pop');
+          renderAll();
+        });
+        document.getElementById('filterFlashSaleBtn').addEventListener('click', () => {
+          state.onlyDiscount = true;
+          state.sortBy = 'discount-desc';
+          document.getElementById('onlyDiscountCheckbox').checked = true;
+          document.getElementById('sortSelect').value = 'discount-desc';
+          playSound('pop');
+          renderAll();
+          document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Reset filters
+        const resetAllFilters = () => {
+          state.activeView = 'catalog';
+          state.selectedCategory = 'Semua';
+          state.searchQuery = '';
+          state.onlyDiscount = false;
+          state.sortBy = 'popular';
+          searchInput.value = '';
+          clearSearchBtn.classList.add('hidden');
+          document.getElementById('onlyDiscountCheckbox').checked = false;
+          document.getElementById('sortSelect').value = 'popular';
+          playSound('pop');
+          renderAll();
+        };
+        document.getElementById('resetAllFiltersBtn').addEventListener('click', resetAllFilters);
+        document.getElementById('emptyResetBtn').addEventListener('click', resetAllFilters);
+
+        // Voucher chips & top promo bar
+        document.querySelectorAll('.voucher-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const code = chip.getAttribute('data-voucher');
+            document.getElementById('cartVoucherInput').value = code;
+            applyVoucherCode(code);
+          });
+        });
+        document.getElementById('topPromoCodeBtn').addEventListener('click', () => {
+          document.getElementById('cartVoucherInput').value = 'TIFLYHEMAT20';
+          applyVoucherCode('TIFLYHEMAT20');
+        });
+        document.getElementById('removeActiveVoucherBtn').addEventListener('click', () => {
+          state.activeVoucher = null;
+          showToast('Voucher dilepas', 'ℹ️');
+          renderAll();
+        });
+        document.getElementById('applyCartVoucherBtn').addEventListener('click', () => {
+          const val = document.getElementById('cartVoucherInput').value;
+          applyVoucherCode(val);
+        });
+
+        // Sound & Theme Toggles
+        const soundBtn = document.getElementById('soundToggleBtn');
+        soundBtn.addEventListener('click', () => {
+          state.soundEnabled = !state.soundEnabled;
+          soundBtn.textContent = state.soundEnabled ? '🔊' : '🔇';
+          showToast(state.soundEnabled ? 'Efek suara diaktifkan' : 'Efek suara dibisukan', state.soundEnabled ? '🔊' : '🔇');
+        });
+
+        const themeBtn = document.getElementById('themeToggleBtn');
+        themeBtn.addEventListener('click', () => {
+          state.darkMode = !state.darkMode;
+          document.documentElement.classList.toggle('dark', state.darkMode);
+          themeBtn.textContent = state.darkMode ? '☀️' : '🌙';
+          playSound('pop');
+        });
+
+        // Cart Drawer Open/Close
+        const cartBackdrop = document.getElementById('cartDrawerBackdrop');
+        document.getElementById('openCartBtn').addEventListener('click', () => {
+          cartBackdrop.classList.remove('hidden');
+          playSound('pop');
+        });
+        document.getElementById('floatingOpenCartBtn').addEventListener('click', () => {
+          cartBackdrop.classList.remove('hidden');
+          playSound('pop');
+        });
+        document.getElementById('closeCartBtn').addEventListener('click', () => {
+          cartBackdrop.classList.add('hidden');
+        });
+        cartBackdrop.addEventListener('click', (e) => {
+          if (e.target === cartBackdrop) cartBackdrop.classList.add('hidden');
+        });
+        document.getElementById('clearCartBtn').addEventListener('click', () => {
+          if (state.cart.length === 0) return;
+          state.cart = [];
+          savePersistentState();
+          playSound('pop');
+          showToast('Keranjang belanja telah dikosongkan', '🗑️');
+          renderAll();
+        });
+
+        // Checkout Modal Open/Close & Actions
+        document.getElementById('proceedToCheckoutBtn').addEventListener('click', openCheckoutModal);
+        document.getElementById('floatingQuickCheckoutBtn').addEventListener('click', openCheckoutModal);
+        document.getElementById('closeCheckoutModalBtn').addEventListener('click', () => {
+          document.getElementById('checkoutModalBackdrop').classList.add('hidden');
+        });
+        document.getElementById('fillSampleAddressBtn').addEventListener('click', () => {
+          document.getElementById('buyerNameInput').value = 'Muhammad Dzikri Khairi Alfatih';
+          document.getElementById('buyerPhoneInput').value = '081288997766';
+          document.getElementById('buyerAddressInput').value = 'Jl. Pasar Minggu Raya No. 163, Jakarta Selatan, DKI Jakarta 12510';
+          document.getElementById('buyerNoteInput').value = 'Tolong packing aman pakai bubble wrap ya kak!';
+          document.getElementById('checkoutErrorMsg').classList.add('hidden');
+          playSound('pop');
+          showToast('Data contoh penerima berhasil diisi!', '✨');
+        });
+        document.getElementById('confirmPayBtn').addEventListener('click', submitCheckoutOrder);
+
+        // Close Product Modal on backdrop click
+        const prodBackdrop = document.getElementById('productModalBackdrop');
+        prodBackdrop.addEventListener('click', (e) => {
+          if (e.target === prodBackdrop) prodBackdrop.classList.add('hidden');
+        });
+
+        // VS Code Modal & Copy Code
+        const vscodeBackdrop = document.getElementById('vscodeModalBackdrop');
+        document.getElementById('vscodeGuideBtn').addEventListener('click', () => {
+          vscodeBackdrop.classList.remove('hidden');
+          playSound('pop');
+        });
+        document.getElementById('closeVscodeModalBtn').addEventListener('click', () => {
+          vscodeBackdrop.classList.add('hidden');
+        });
+        vscodeBackdrop.addEventListener('click', (e) => {
+          if (e.target === vscodeBackdrop) vscodeBackdrop.classList.add('hidden');
+        });
+        document.getElementById('copyFullHtmlBtn').addEventListener('click', () => {
+          const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+          const fallbackCopy = (text) => {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            ta.remove();
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullHtml).catch(() => fallbackCopy(fullHtml));
+          } else {
+            fallbackCopy(fullHtml);
+          }
+          playSound('success');
+          showToast('Seluruh kode HTML berhasil disalin! Siap ditempel di VS Code.', '📋');
+        });
+
+        // Flash Sale Countdown Timer & Rotating Spotlight
+        setInterval(() => {
+          if (state.flashSaleSeconds > 0) state.flashSaleSeconds--;
+          const hrs = String(Math.floor(state.flashSaleSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((state.flashSaleSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(state.flashSaleSeconds % 60).padStart(2, '0');
+          const hEl = document.getElementById('timerHours');
+          const mEl = document.getElementById('timerMinutes');
+          const sEl = document.getElementById('timerSeconds');
+          if (hEl) hEl.textContent = hrs;
+          if (mEl) mEl.textContent = mins;
+          if (sEl) sEl.textContent = secs;
+
+          if (state.flashSaleSeconds % 6 === 0) {
+            state.spotlightIndex++;
+            renderSpotlight();
+          }
+        }, 1000);
+      }
+
+      // Start Application
+      initEventListeners();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
